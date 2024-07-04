@@ -85,3 +85,5 @@ line-trial,3lines,18.97seconds,33chars,313cpm
 task-trial,0lines,20.66seconds,33chars,288cpm
 task-trial,3lines,20.15seconds,33chars,295cpm
 task-trial,3lines,18.57seconds,34chars,330cpm
+task-trial,2lines,6.3seconds,15chars,286cpm
+task-trial,14lines,92.8seconds,34chars,308cpm
