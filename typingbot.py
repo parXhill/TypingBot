@@ -5,11 +5,27 @@ import time
 import random
 import csv
 
+def bootup(initial_delay, secondary_delay):
+    
+    time.sleep(initial_delay)
+
+    pyautogui.write(f"Will start writing lines in {secondary_delay} seconds", 0.01)
+
+    time.sleep(secondary_delay)
+
+def pause_chance():
+
+    pause_chance = random.randint(1, 10) 
+    if pause_chance >= 10:
+        pause_time = random.randint(1, 5) 
+        time.sleep(pause_time)
+        return True
 
 def get_mode():
 
     mode = "mode error"
 
+## Setting the chance of a break:
     if random.randint(1, 100) > 85:
         mode = get_break_value()
     else: 
@@ -18,6 +34,8 @@ def get_mode():
     return mode
 
 def get_break_value():
+
+    ## Decides the speed of the typing break period
     break_check_value = random.randint(1, 100) 
 
     break_time = "error"
@@ -35,6 +53,7 @@ def get_break_value():
 
 def get_typing_speed():
 
+    ## Decides the typing speed per segment
     typing_check_value = random.randint(1, 100)
 
     speed = "speed error"
@@ -50,38 +69,44 @@ def get_typing_speed():
 
     return speed
 
-def line_formula(line, repetitions, number_of_segments):
-    
-    lines_to_complete = repetitions
+def write_lines(line, lines_set):
 
-    segment_length = repetitions / number_of_segments
-    print(segment_length)
+    total_lines = lines_set
+    print("Original total_lines:", total_lines)
 
-    for i in range(number_of_segments):
+    while lines_set > 0:
+        
+        print("Remaining lines:", lines_set)      
 
-        ##Decides the segment style and sets speed
+        ##Sets mode (typing interval speed)
         mode = get_mode()
-        print(mode)
         interval = mode[1]
 
-        ## Optional Pause 20% chance
+        ## Chance to pause between lines
+        took_pause = pause_chance()
+        if took_pause:
+            print("Pause taken")
 
-        pause_chance = random.randint(1, 10) 
-        if pause_chance > 7:
-            pause_time = random.randint(1, 7) 
-            time.sleep(pause_time)
-            print("Break taken:", pause_time)
+        ## Chance to pause between lines
+        made_mistake = add_mistake_chance()
 
-        for i in range(int(segment_length)):
-            while lines_to_complete > 0:
-                pyautogui.write(line, interval)
-                lines_to_complete -= 1
+        if made_mistake:
+            print("Made mistake")
+            lines_set += 1
+            total_lines +=1
 
-def characters_per_minute(line, execution_time):
+        else: 
+            pyautogui.write(line, interval)
+            lines_set -= 1
+            print("Line completed")
+    
+    return total_lines
+
+def characters_per_minute(line, execution_time, total_lines):
 
     line_length = len(line)
 
-    characters_per_minute = 60 / execution_time * (line_length * repetitions)
+    characters_per_minute = 60 / execution_time * (line_length * total_lines)
 
     return characters_per_minute, line_length
 
@@ -89,34 +114,17 @@ def alter_typing_speed(min, max):
     random_interval= random.uniform(min, max)
     return random_interval
 
-def line_time_test():
-    for i in range(1):
-
-        start_time = time.time()
-
-        line_formula(line)
-
-        end_time = time.time()
-
-        execution_time = end_time - start_time
-
-        data.append(["line-trial",f"{repetitions}lines", f"{round(execution_time, 2)}seconds", f"{characters_per_minute(line, execution_time)[1]}chars", f"{round(characters_per_minute(line, execution_time)[0])}cpm"])
-
-def task_time_test(line, repetitions, number_of_segments):
+def task_time_test(line, lines_set):
 
     start_time = time.time()
 
-    ## Set number of trials
-    for i in range(1):
-
-        ## Execute code
-        line_formula(line, repetitions, number_of_segments)
+    total_lines = write_lines(line, lines_set)
 
     end_time = time.time()
 
     execution_time = end_time - start_time
 
-    data.append(["task-trial", f"{repetitions*(i+1)}lines", f"{round(execution_time, 2)}seconds", f"{characters_per_minute(line, execution_time)[1]}chars", f"{round(characters_per_minute(line, execution_time)[0])}cpm"])
+    data.append([f"{total_lines}total lines", f"{round(execution_time, 2)}seconds", f"{characters_per_minute(line, execution_time)[1]}chars", f"{round(characters_per_minute(line, execution_time)[0])}cpm", f"Mistakes:{total_lines - lines_set}"])
 
 def add_data_to_csv():
 
@@ -128,34 +136,44 @@ def add_data_to_csv():
         
         csvwriter.writerows(data)
 
-############################### FUNCTIONS ABOVE ##############################
+def add_mistake_chance():
+    
+    # Sets mistake chance
+    mistake_chance = random.randint(1, 100)
 
+    if mistake_chance > 90:
+
+        # Chooses mistake character
+        mistake_indices = [0, 1, -1, -2]
+        mistake_index_selector = random.randint(0,3)
+        pyautogui.write(line[mistake_indices[mistake_index_selector]], 0.1)
+        time.sleep(4)
+        return True
+    else:
+        return False
+
+############################### FUNCTIONS ABOVE ##############################
 
 data = []
 
-line = "i must remember to do my homework."
+line = "I must write out 100 lines."
 
-repetitions = 14
-
-number_of_segments = 7
+lines_set= 4
 
 
-############# PARAMETERS FOR TASK ABOVE ##############################
-############# PROGRAM BELOW ##########################################
+############# EXECUTE PROGRAM BELOW ##########################################
 
-## 1. Pause while screen is selected
+## 1. Call bootup to initialize, preventing first letter being wrongly uncapitalized
 
-time.sleep(3)
+bootup(initial_delay = 1, secondary_delay = 2)
 
 ## 2. Call line writing function
 
-task_time_test(line, repetitions, number_of_segments)
+task_time_test(line, lines_set)
+
+## 3. Add test data to CSV
 
 add_data_to_csv()
 
-############# LINE PRACTICES BELOW ##########################################
-"""i must rememberi must remember i must rememberi must rememberi must rememberi must rememberi must rememberi must remember"""
-
-
-
-##raise Exception('Stop Here')
+############# LINE PRACTICES BELOW ##########################################and yo
+""" dsfdf """
