@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import pyautogui
 import time
 import random
+from typingbot import get_mode, pause_chance, add_mistake_chance
 
 driver_path = '/Users/alexanderparkhill/chromedriver'
 
@@ -35,15 +36,17 @@ def interruption_loop():
     while check_for_interruption_screen():
         print("Interruption Loop")
         time.sleep(1)
+    time.sleep(2)
     print("Exiting Interruption Loop")
 
 def mistake_loop():
-    print("Entering Mistake Loop")
+    print("Unintentional: Entering Mistake Loop")
+    time.sleep(2)
     while check_for_mistake():
         print("Mistake Loop")
-        time.sleep(1)
+        time.sleep(2)
     print("Exiting Mistake Loop")
-    time.sleep(1)
+    time.sleep(2)
       
 def check_for_interruption_screen():
     try: 
@@ -61,6 +64,81 @@ def check_for_mistake():
     except:
         return False
 
+def issues_check():
+
+    mistake_check = check_for_mistake()
+    interruption_check = check_for_interruption_screen()
+
+    if mistake_check == True:
+        print('Mistake Screen Detected')
+        mistake_loop()
+        return True
+
+    if interruption_check == True:
+        print('Interruption screen detected')
+        interruption_loop()
+        return True
+
+def split_into_chunks(line, chunk_size):
+    return [line[i:i + chunk_size] for i in range(0, len(line), chunk_size)]
+
+def type_line(line, interval):
+    
+    print('Entered type_line')
+    # Break line up
+    list_of_chunks = split_into_chunks(line, 1)
+    print(list_of_chunks)
+
+    for chunk in list_of_chunks:
+
+        if issues_check():
+            print("Issue detected in type_line, returning")
+            return False
+        
+        else: 
+            pyautogui.write(chunk, interval)
+            print(chunk)
+
+    return True  
+    
+def selenium_write_lines(line, lines_set):
+
+    time.sleep(2)
+
+    total_lines = lines_set
+    print("Original total_lines:", total_lines)
+
+    while lines_set > 0:
+        
+        print("Remaining lines:", lines_set)      
+
+        ##Sets mode (typing interval speed)
+
+        mode = get_mode()
+
+        interval = mode[1]
+
+        ## Chance to pause between lines
+        took_pause = pause_chance()
+        if took_pause:
+            print("Pause taken")
+
+        ## Chance for intentional mistakes, adds lines
+        made_mistake = add_mistake_chance(line)
+
+        if made_mistake:
+            print("Intentional Mistake Made")
+            lines_set += 1
+            total_lines +=1
+
+        else: 
+            if type_line(line, interval):
+                lines_set -= 1
+            
+    print(total_lines)
+    return total_lines
+
+
 #---------------------------Opening page---------------------------------#
 # Open the webpage
 driver.get('https://www.typeforme.net/task/43c2042309fb4eb8bb687a5744c198f1')
@@ -73,14 +151,23 @@ WebDriverWait(driver, 10).until(
 button = driver.find_element(By.CLASS_NAME, 'v-btn--elevated')
 
 # Click the button
-button.click()
+button.click() 
+
+
 
 # Wait until the task becomes visible
 wait = WebDriverWait(driver, 10)
-task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/43c2042309fb4eb8bb687a5744c198f1"]')))
+task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/18ebf592ecc1432b848106a7879cf8c7"]')))
 
 # Click the element
 task_link.click()
+
+WebDriverWait(driver, 10).until(
+    EC.presence_of_element_located((By.XPATH, "//button[contains(@class, 'v-btn') and contains(., 'Start the task')]")))
+
+# Button to start task on intro screen
+new_button= driver.find_element(By.XPATH, "//button[contains(@class, 'v-btn') and contains(., 'Start the task')]")
+new_button.click()
 
 # Pause before starting to type
 print("Arrived on page, starting typing cycle in 3 seconds")
@@ -91,36 +178,15 @@ time.sleep(2)
 
 ## Trigger initial mistake to prevent capital letter issue
 
-pyautogui.write("z", 0.1)
 
 ## Complete the task
 
-for i in range(25):
-    
-    mistake_check = check_for_mistake()
-    interruption_check = check_for_interruption_screen()
-
-    if mistake_check == True:
-        print('Mistake Screen Detected')
-        mistake_loop()
-
-    if interruption_check == True:
-        print('Interruption screen detected')
-        interruption_loop()
-        #Trigger a mistake to return to the start of the line.
-        pyautogui.press('enter')
-   
-    else:
-        if random.randint(1,100) < 90:
-            print("Writing Standard Line")
-            pyautogui.write("I must do my Homework on time.", 0.05)
-        else:
-            print("Writing Mistake Line")
-            pyautogui.write("I mustr", 0.05)
+selenium_write_lines("it is extremely important to write this line only using lower-case letters.", 70)
 
 
 # Wait to observe results before browser closes
 
-time.sleep(30)
+time.sleep(35)
 
 
+#----- unneeded? --------#

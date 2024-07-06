@@ -5,6 +5,7 @@ import time
 import random
 import csv
 
+
 def bootup(initial_delay, secondary_delay):
     
     time.sleep(initial_delay)
@@ -27,9 +28,11 @@ def get_mode():
 
 ## Setting the chance of a break:
     if random.randint(1, 100) > 85:
-        mode = get_break_value()
+        mode = get_typing_speed() ##### ALTERED-SWITCHED-WITH-BREAK ########
+        print(mode)
     else: 
         mode = get_typing_speed()
+        print(mode)
     
     return mode
 
@@ -69,7 +72,7 @@ def get_typing_speed():
 
     return speed
 
-def write_lines(line, lines_set):
+def original_write_lines(line, lines_set):
 
     total_lines = lines_set
     print("Original total_lines:", total_lines)
@@ -88,7 +91,7 @@ def write_lines(line, lines_set):
             print("Pause taken")
 
         ## Chance to pause between lines
-        made_mistake = add_mistake_chance()
+        made_mistake = add_mistake_chance(line)
 
         if made_mistake:
             print("Made mistake")
@@ -136,12 +139,12 @@ def add_data_to_csv():
         
         csvwriter.writerows(data)
 
-def add_mistake_chance():
+def add_mistake_chance(line):
     
     # Sets mistake chance
     mistake_chance = random.randint(1, 100)
 
-    if mistake_chance > 90:
+    if mistake_chance > 100: #ALTERED FOR NO MISTAKES
 
         # Chooses mistake character
         mistake_indices = [0, 1, -1, -2]
@@ -154,26 +157,26 @@ def add_mistake_chance():
 
 ############################### FUNCTIONS ABOVE ##############################
 
-data = []
 
-line = "It is better for me to type this than to be getting up to anything more mischievous."
+#data = []
 
-lines_set= 30
+#line = "It is better for me to type this than to be getting up to anything more mischievous."
 
+#lines_set= 30
 
 ############# EXECUTE PROGRAM BELOW ##########################################
 
 ## 1. Call bootup to initialize, preventing first letter being wrongly uncapitalized
 
-bootup(initial_delay = 1, secondary_delay = 2)
+##bootup(initial_delay = 1, secondary_delay = 2)
 
 ## 2. Call line writing function
 
-task_time_test(line, lines_set)
+##task_time_test(line, lines_set)
 
 ## 3. Add test data to CSV
 
-add_data_to_csv()
+##add_data_to_csv()
 
 ############# LINE PRACTICES BELOW ##########################################and yo
-"""will start writing lines in 2 seconds"""
+""""""
