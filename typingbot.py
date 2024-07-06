@@ -156,9 +156,9 @@ def add_mistake_chance():
 
 data = []
 
-line = "I must write out 100 lines."
+line = "It is better for me to type this than to be getting up to anything more mischievous."
 
-lines_set= 4
+lines_set= 30
 
 
 ############# EXECUTE PROGRAM BELOW ##########################################
@@ -176,4 +176,4 @@ task_time_test(line, lines_set)
 add_data_to_csv()
 
 ############# LINE PRACTICES BELOW ##########################################and yo
-""" dsfdf """
+"""will start writing lines in 2 seconds"""
