@@ -119,7 +119,7 @@ def add_mistake_chance(line):
     # Sets mistake chance
     mistake_chance = random.randint(1, 100)
 
-    if mistake_chance > 80: 
+    if mistake_chance > 101: 
 
         # Chooses mistake character
         mistake_indices = [0, 1, -1, -2]

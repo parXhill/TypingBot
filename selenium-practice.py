@@ -10,6 +10,7 @@ from typingbot import get_typing_speed, break_chance, add_mistake_chance
 
 #---------------------------Functions---------------------------------#
 
+# Initializes the Selenium driver
 def initialize_selenium_driver(path):
     
     driver_path = path
@@ -34,134 +35,7 @@ def initialize_selenium_driver(path):
 
     return driver
 
-def interruption_loop():
-    print("Interruption Loop Started")
-    time.sleep(2)
-    while check_for_interruption_screen():
-        print("Continuing Interruption Loop")
-        time.sleep(1)
-    print("Exiting Interruption Loop")
-    time.sleep(2)
-
-def mistake_loop():
-    print("Mistake Loop Started")
-    time.sleep(2)
-    while check_for_mistake():
-        print("Continuing Mistake Loop")
-        time.sleep(1)
-    print("Exiting Mistake Loop")
-    time.sleep(2)
-      
-def check_for_interruption_screen():
-    try: 
-        interruption_overlay = driver.find_element(By.ID, 'interruptionOverlay')
-        if interruption_overlay.is_displayed():
-            return True
-    except:
-        return False
-
-def check_for_mistake():
-    try: 
-        mistake_overlay = driver.find_element(By.ID, 'mistakeOverlay')
-        if mistake_overlay.is_displayed():
-            return True
-    except:
-        return False
-
-def issues_check():
-
-    mistake_check = check_for_mistake()
-    interruption_check = check_for_interruption_screen()
-
-    if mistake_check == True:
-        print('Mistake Screen Detected: Entering mistake loop')
-        mistake_loop()
-        return "mistake"
-
-    if interruption_check == True:
-        print('Interruption screen detected: Entering interruption loop')
-        interruption_loop()
-        return "interruption"
-
-def type_line(typing_speed):
-
-    #Set the interval between character strokes
-    interval = typing_speed[1]
-
-    #Find the line to type in the DOM
-    line_to_type_element = driver.find_element(By.ID, 'lineToTypeCurrent')
-    line_to_type = line_to_type_element.text
-    print("Line to type current:", line_to_type)
-
-    #Loop through the characters in the line
-    for character in line_to_type:
-
-        #Check for mistake or interruption screens
-        issue = issues_check()
-
-        if issue == "mistake":
-            print("Mistake loop finished: Returning to main function")
-            return False
-        
-        elif issue == "interruption":
-            print("Interruption loop finished: Continuing")
-            pyautogui.write(character, interval)
-            print(character)
-
-        else: 
-            #Write the character
-            pyautogui.write(character, interval)
-            print(character)
-
-    return True  
-
-def write_lines():
-
-    #Get the line from the DOM and writes first character 
-    line = initialize_task()
-
-    #Reads number of lines needed from the DOM
-    lines_remaining = get_remaining_lines()
-
-    while lines_remaining > 0:
-        
-        print("Remaining lines:", lines_remaining)      
-
-        #Sets typing speed
-        typing_speed = get_typing_speed()
-        print(typing_speed)
-
-        #Chance to take a break between lines
-        took_break = break_chance()
-
-        if took_break:
-            print("Pause taken")
-
-        #Chance for intentional mistake
-        made_intentional_mistake = add_mistake_chance(line)
-
-        if made_intentional_mistake:
-            print("Intentional Mistake Made")
-
-        else: 
-            type_line(typing_speed)
-        
-        #Re-calculated number of lines needed
-        lines_remaining = get_remaining_lines()
-
-def get_remaining_lines():
-
-    lines_remaining_element = driver.find_element(By.XPATH, '//tr/td[@class="text-right"]')
-    lines_remaining = lines_remaining_element.text
-    print("Lines Remaining: ", lines_remaining)
-    return int(lines_remaining)
-
-def get_initial_line():
-    initial_line_element = driver.find_element(By.ID, 'lineToTypeInitial')
-    initial_line = initial_line_element.text
-    print("Initial line to type:", initial_line)
-    return initial_line
-
+# Opens the browser and navigates to the task page
 def open_task(task_URL):
 
     # Opens the webpage
@@ -202,6 +76,14 @@ def open_task(task_URL):
     time.sleep(1)
     print("Arrived on task page.")
 
+# Finds the initial line string to write 
+def get_initial_line():
+    initial_line_element = driver.find_element(By.ID, 'lineToTypeInitial')
+    initial_line = initial_line_element.text
+    print("Initial line to type:", initial_line)
+    return initial_line
+
+# Starts the task, triggering the DOM to reveal the task details
 def initialize_task():
 
     line = get_initial_line()
@@ -209,16 +91,151 @@ def initialize_task():
     #Writes the first character to trigger DOM changes that reveal total lines 
     pyautogui.write(line[0])
 
-    time.sleep(1)
+    time.sleep(2)
 
     return line
+
+# Organizes the writing of the sentences
+def write_lines():
+
+    #Get the line from the DOM and writes first character 
+    line = initialize_task()
+
+    #Reads number of lines needed from the DOM
+    lines_remaining = get_remaining_lines()
+
+    while lines_remaining > 0:
+        
+        print("Remaining lines:", lines_remaining)      
+
+        #Sets typing speed
+        typing_speed = get_typing_speed()
+        print(typing_speed)
+
+        #Chance to take a break between lines
+        took_break = break_chance()
+
+        if took_break:
+            print("Pause taken")
+
+        #Chance for intentional mistake
+        made_intentional_mistake = add_mistake_chance(line)
+
+        if made_intentional_mistake:
+            print("Intentional Mistake Made")
+
+        else: 
+            type_line(typing_speed)
+        
+        #Re-calculated number of lines needed
+        lines_remaining = get_remaining_lines()
+
+# Types each line 
+def type_line(typing_speed):
+
+    #Set the interval between character strokes
+    interval = typing_speed[1]
+
+    #Find the line to type in the DOM
+    line_to_type_element = driver.find_element(By.ID, 'lineToTypeCurrent')
+    line_to_type = line_to_type_element.text
+    print("Line to type current:", line_to_type)
+
+    #Loop through the characters in the line
+    for character in line_to_type:
+
+        #Check for mistake or interruption screens
+        issue = issues_check()
+
+        if issue == "mistake":
+            print("Mistake loop finished: Returning to main function")
+            return False
+        
+        elif issue == "interruption":
+            print("Interruption loop finished: Continuing")
+            pyautogui.write(character, interval)
+            print(character)
+
+        else: 
+            #Write the character
+            pyautogui.write(character, interval)
+            print(character)
+
+    return True  
+
+# Keeps track of the amount of lines to write
+def get_remaining_lines():
+
+    lines_remaining_element = driver.find_element(By.XPATH, '//tr/td[@class="text-right"]')
+    lines_remaining = lines_remaining_element.text
+    print("Lines Remaining: ", lines_remaining)
+    return int(lines_remaining)
+
+# Identifies issues such as mistakes, or screen interruptions
+def issues_check():
+
+    #-----------FUNCTIONS-----------#
+
+    # Checks for an interruption screen
+    def check_for_interruption_screen():
+        try: 
+            interruption_overlay = driver.find_element(By.ID, 'interruptionOverlay')
+            if interruption_overlay.is_displayed():
+                return True
+        except:
+            return False
+
+    # Checks for mistakes
+    def check_for_mistake():
+        try: 
+            mistake_overlay = driver.find_element(By.ID, 'mistakeOverlay')
+            if mistake_overlay.is_displayed():
+                return True
+        except:
+            return False
+
+    # Loops until interruption screen is no longer displayed
+    def interruption_loop():
+        print("Interruption Loop Started")
+        time.sleep(2)
+        while check_for_interruption_screen():
+            print("Continuing Interruption Loop")
+            time.sleep(1)
+        print("Exiting Interruption Loop")
+        time.sleep(2)
+
+    # Loops until mistake screen is no longer displayed
+    def mistake_loop():
+        print("Mistake Loop Started")
+        time.sleep(2)
+        while check_for_mistake():
+            print("Continuing Mistake Loop")
+            time.sleep(1)
+        print("Exiting Mistake Loop")
+        time.sleep(2)
+
+
+    #-----------ISSUES CHECK-----------#
+    mistake_check = check_for_mistake()
+    interruption_check = check_for_interruption_screen()
+
+    if mistake_check == True:
+        print('Mistake Screen Detected: Entering mistake loop')
+        mistake_loop()
+        return "mistake"
+
+    if interruption_check == True:
+        print('Interruption screen detected: Entering interruption loop')
+        interruption_loop()
+        return "interruption"
+
 #---------------------------Start Program---------------------------------#
 
-# Initialize driver
-driver = initialize_selenium_driver('/Users/alexanderparkhill/chromedriver')
+# Initialize driver on local path
+driver = initialize_selenium_driver(path= '/Users/alexanderparkhill/chromedriver')
 
-# Open the task
-open_task("https://www.typeforme.net/task/8770528c954144258984136ed797d51d")
+# Open the task with the URL
+open_task(task_URL="https://www.typeforme.net/task/8770528c954144258984136ed797d51d")
 
 # Start typing
 write_lines()
