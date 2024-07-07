@@ -80,7 +80,7 @@ def issues_check():
         interruption_loop()
         return "interruption"
 
-def type_line(line, interval):
+def type_line(interval):
 
     line_to_type_element = driver.find_element(By.ID, 'lineToTypeCurrent')
     line_to_type = line_to_type_element.text
@@ -105,21 +105,20 @@ def type_line(line, interval):
 
     return True  
 
-def selenium_write_lines(lines_set):
+def selenium_write_lines():
     
     line = get_initial_line()
 
     #Get it to write the first character in the testing phase
     pyautogui.write(line[0])
 
+    lines_remaining = get_remaining_lines()
+
     time.sleep(2)
 
-    total_lines = lines_set
-    print("Original total_lines:", total_lines)
-
-    while lines_set > 0:
+    while lines_remaining > 0:
         
-        print("Remaining lines:", lines_set)      
+        print("Remaining lines:", lines_remaining)      
 
         ##Sets mode (typing interval speed)
 
@@ -137,16 +136,18 @@ def selenium_write_lines(lines_set):
 
         if made_mistake:
             print("Intentional Mistake Made")
-            lines_set += 1
-            total_lines +=1
 
         else: 
-            if read_line_type_line(line, interval):
-                lines_set -= 1
+            type_line(interval)
         
-            
-    print(total_lines)
-    return total_lines
+        lines_remaining = get_remaining_lines()
+
+def get_remaining_lines():
+
+    lines_remaining_element = driver.find_element(By.XPATH, '//tr/td[@class="text-right"]')
+    lines_remaining = lines_remaining_element.text
+    print("Lines Remaining: ", lines_remaining)
+    return int(lines_remaining)
 
 def get_initial_line():
     initial_line_element = driver.find_element(By.ID, 'lineToTypeInitial')
@@ -171,7 +172,7 @@ button.click()
 
 # Wait until the task becomes visible
 wait = WebDriverWait(driver, 10)
-task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/401cc525cac747f5a784f6e1b915a3a5"]')))
+task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/1483356dfe7a4714a59062b12c0d9bb4"]')))
 
 # Click the element
 task_link.click()
@@ -201,7 +202,7 @@ time.sleep(2)
 
 ## Complete the task
 
-selenium_write_lines(50)
+selenium_write_lines()
 
 
 # Wait to observe results before browser closes
