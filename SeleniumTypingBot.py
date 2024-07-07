@@ -139,7 +139,6 @@ def type_line(typing_speed):
     #Find the line to type in the DOM
     line_to_type_element = driver.find_element(By.ID, 'lineToTypeCurrent')
     line_to_type = line_to_type_element.text
-    print("Line to type current:", line_to_type)
 
     #Loop through the characters in the line
     for character in line_to_type:
@@ -229,13 +228,14 @@ def issues_check():
         interruption_loop()
         return "interruption"
 
+
 #--------------------------- Program ---------------------------------#
 
 # Initialize driver on local path
 driver = initialize_selenium_driver(path= '/Users/alexanderparkhill/chromedriver')
 
 # Open the task with the URL
-open_task(task_URL="https://www.typeforme.net/task/8770528c954144258984136ed797d51d")
+open_task(task_URL="https://www.typeforme.net/task/7026b8946a494ea8aef406749c9db97a")
 
 # Start typing
 write_lines()
