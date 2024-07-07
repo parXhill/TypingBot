@@ -80,9 +80,6 @@ def issues_check():
         interruption_loop()
         return "interruption"
 
-def split_into_chunks(line, chunk_size):
-    return [line[i:i + chunk_size] for i in range(0, len(line), chunk_size)]
-
 def type_line(line, interval):
     
     for character in line:
@@ -160,7 +157,7 @@ button.click()
 
 # Wait until the task becomes visible
 wait = WebDriverWait(driver, 10)
-task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/18ebf592ecc1432b848106a7879cf8c7"]')))
+task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/baa62fd23fef4b16a25893d22316dec3"]')))
 
 # Click the element
 task_link.click()
@@ -184,7 +181,7 @@ time.sleep(2)
 
 ## Complete the task
 
-selenium_write_lines("it is extremely important to write this line only using lower-case letters.", 70)
+selenium_write_lines("Please, Sir, may I have another? I can't help myself.", 50)
 
 
 # Wait to observe results before browser closes

@@ -125,6 +125,7 @@ def add_mistake_chance(line):
         mistake_indices = [0, 1, -1, -2]
         mistake_index_selector = random.randint(0,3)
         pyautogui.write(line[mistake_indices[mistake_index_selector]], 0.1)
+        print(line[mistake_indices[mistake_index_selector]])
         time.sleep(4)
         return True
     else:
