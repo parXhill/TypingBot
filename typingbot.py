@@ -13,12 +13,12 @@ def bootup(initial_delay, secondary_delay):
 
     time.sleep(secondary_delay)
 
-def pause_chance():
+def break_chance():
 
-    pause_chance = random.randint(1, 10) 
-    if pause_chance >= 10:
-        pause_time = random.randint(1, 5) 
-        time.sleep(pause_time)
+    break_chance = random.randint(1, 10) 
+    if break_chance >= 10:
+        break_time = random.randint(1, 5) 
+        time.sleep(break_time)
         return True
 
 def get_typing_speed():
@@ -57,13 +57,13 @@ def non_selenium_write_lines(line, lines_set):
         print("Remaining lines:", lines_set)      
 
         ##Sets mode (typing interval speed)
-        mode = get_mode()
+        mode = get_typing_speed()
         interval = mode[1]
 
         ## Chance to pause between lines
-        took_pause = pause_chance()
-        if took_pause:
-            print("Pause taken")
+        took_break = break_chance()
+        if took_break:
+            print("Break taken")
 
         ## Chance to pause between lines
         made_mistake = add_mistake_chance(line)

@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import pyautogui
 import time
 import random
-from typingbot import get_typing_speed, pause_chance, add_mistake_chance
+from typingbot import get_typing_speed, break_chance, add_mistake_chance
 
 driver_path = '/Users/alexanderparkhill/chromedriver'
 
@@ -80,14 +80,20 @@ def issues_check():
         interruption_loop()
         return "interruption"
 
-def type_line(interval):
+def type_line(typing_speed):
 
+    #Set the interval between character strokes
+    interval = typing_speed[1]
+
+    #Find the line to type in the DOM
     line_to_type_element = driver.find_element(By.ID, 'lineToTypeCurrent')
     line_to_type = line_to_type_element.text
     print("Line to type current:", line_to_type)
 
+    #Loop through the characters in the line
     for character in line_to_type:
 
+        #Check for mistake or interruption screens
         issue = issues_check()
 
         if issue == "mistake":
@@ -100,46 +106,44 @@ def type_line(interval):
             print(character)
 
         else: 
+            #Write the character
             pyautogui.write(character, interval)
             print(character)
 
     return True  
 
-def selenium_write_lines():
-    
-    line = get_initial_line()
+def write_lines():
 
-    #Get it to write the first character in the testing phase
-    pyautogui.write(line[0])
+    #Get the line from the DOM and writes first character 
+    line = initialize_task()
 
+    #Reads number of lines needed from the DOM
     lines_remaining = get_remaining_lines()
-
-    time.sleep(2)
 
     while lines_remaining > 0:
         
         print("Remaining lines:", lines_remaining)      
 
-        ##Sets mode (typing interval speed)
-
+        #Sets typing speed
         typing_speed = get_typing_speed()
         print(typing_speed)
-        interval = 0.01 #MODIFIED FOR FAST TEST, SHOULD BE typing_speed[1]
 
-        ## Chance to pause between lines
-        took_pause = pause_chance()
-        if took_pause:
+        #Chance to take a break between lines
+        took_break = break_chance()
+
+        if took_break:
             print("Pause taken")
 
-        ## Chance for intentional mistakes, adds lines
-        made_mistake = add_mistake_chance(line)
+        #Chance for intentional mistake
+        made_intentional_mistake = add_mistake_chance(line)
 
-        if made_mistake:
+        if made_intentional_mistake:
             print("Intentional Mistake Made")
 
         else: 
-            type_line(interval)
+            type_line(typing_speed)
         
+        #Re-calculated number of lines needed
         lines_remaining = get_remaining_lines()
 
 def get_remaining_lines():
@@ -155,44 +159,59 @@ def get_initial_line():
     print("Initial line to type:", initial_line)
     return initial_line
 
+def open_task(task_URL):
+
+    # Opens the webpage
+    driver.get('https://www.typeforme.net')
+
+    # Wait for the 'accept terms' button
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, 'v-btn--elevated')))
+
+    # Create 'accept terms' button element
+    accept_terms_button = driver.find_element(By.CLASS_NAME, 'v-btn--elevated')
+
+    # Click 'accept terms' button
+    accept_terms_button.click() 
+
+
+    # Wait until the specific task option becomes visible
+    wait = WebDriverWait(driver, 10)
+
+    # Go to specific task page
+
+    driver.get(f'{task_URL}')
+
+    # Deal with optional introduction screen
+    try: 
+        #Wait for introduction screen 'accept' button to appear 
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(@class, 'v-btn') and contains(., 'Start the task')]")))
+        
+        # Button to start task on intro screen
+        start_task_button= driver.find_element(By.XPATH, "//button[contains(@class, 'v-btn') and contains(., 'Start the task')]")
+        start_task_button.click()
+        
+    except: 
+        pass
+
+    # Confirm arrival on page
+    time.sleep(1)
+    print("Arrived on task page.")
+
+def initialize_task():
+
+    line = get_initial_line()
+
+    #Writes the first character to trigger DOM changes that reveal total lines 
+    pyautogui.write(line[0])
+
+    time.sleep(1)
+
+    return line
 #---------------------------Opening page---------------------------------#
-# Open the webpage
-driver.get('https://www.typeforme.net/task/43c2042309fb4eb8bb687a5744c198f1')
-
-# Wait for the 'accept' button
-WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.CLASS_NAME, 'v-btn--elevated')))
-
-# Define the button
-button = driver.find_element(By.CLASS_NAME, 'v-btn--elevated')
-
-# Click the button
-button.click() 
 
 
-# Wait until the task becomes visible
-wait = WebDriverWait(driver, 10)
-task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/1483356dfe7a4714a59062b12c0d9bb4"]')))
-
-# Click the element
-task_link.click()
-
-WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.XPATH, "//button[contains(@class, 'v-btn') and contains(., 'Start the task')]")))
-
-# Button to start task on intro screen
-new_button= driver.find_element(By.XPATH, "//button[contains(@class, 'v-btn') and contains(., 'Start the task')]")
-new_button.click()
-
-# Pause before starting to type
-print("Arrived on page, starting typing cycle in 3 seconds")
-time.sleep(2)
-
-# Read the initial line that has to be typed
-
-
-
-# Identify the remaining line to be typed. 
 
 
 #---------------------------Typing begins---------------------------------#
@@ -201,8 +220,9 @@ time.sleep(2)
 
 
 ## Complete the task
+open_task("https://www.typeforme.net/task/8770528c954144258984136ed797d51d")
 
-selenium_write_lines()
+write_lines()
 
 
 # Wait to observe results before browser closes
