@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import pyautogui
 import time
 import random
-from typingbot import get_mode, pause_chance, add_mistake_chance
+from typingbot import get_typing_speed, pause_chance, add_mistake_chance
 
 driver_path = '/Users/alexanderparkhill/chromedriver'
 
@@ -125,9 +125,9 @@ def selenium_write_lines(line, lines_set):
 
         ##Sets mode (typing interval speed)
 
-        mode = get_mode()
-
-        interval = mode[1]
+        typing_speed = get_typing_speed()
+        print(typing_speed)
+        interval = typing_speed[1]
 
         ## Chance to pause between lines
         took_pause = pause_chance()

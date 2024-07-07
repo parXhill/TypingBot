@@ -22,49 +22,31 @@ def pause_chance():
         time.sleep(pause_time)
         return True
 
-def get_mode():
-
-## Setting the chance of a break:
-    if random.randint(1, 100) > 85:
-        mode = get_break_value() 
-        print(mode)
-    else: 
-        mode = get_typing_speed()
-        print(mode)
-    
-    return mode
-
-def get_break_value():
-
-    ## Decides the speed of the typing break period
-    break_check_value = random.randint(1, 100) 
-
-    if break_check_value <= 50:
-        break_time = ["short_break", alter_typing_speed(.26, .30)]
-
-    elif break_check_value > 50 and break_check_value <= 85:
-        break_time = ["medium_break", alter_typing_speed(.31, .38)]
-
-    else:
-        break_time = ["long_break", alter_typing_speed(.32, .40)]
-        
-    return break_time
-
 def get_typing_speed():
 
-    ## Decides the typing speed per segment
-    typing_check_value = random.randint(1, 100)
+## Setting the chance of a break:
 
-    if typing_check_value <= 50:
-        speed = ["average_speed", alter_typing_speed(.12, .18)]
+    speed_check_value = random.randint(1, 100)
+    
+    if speed_check_value > 0 and speed_check_value <= 5:
+        typing_speed = ["speed 1/6", alter_typing_speed(.25, .30)]
 
-    elif typing_check_value > 50 and typing_check_value <= 80:
-        speed = ["fast_speed", alter_typing_speed(.09, .14)]
+    elif speed_check_value > 5 and speed_check_value <= 10:
+        typing_speed = ["speed 2/6", alter_typing_speed(.20, .25)]
+
+    elif speed_check_value > 10 and speed_check_value <= 20:
+        typing_speed = ["speed 3/6", alter_typing_speed(.11, .20)]
+
+    elif speed_check_value > 20 and speed_check_value <=40:
+        typing_speed = ["speed 4/6", alter_typing_speed(.06, .10)]
+
+    elif speed_check_value > 40 and speed_check_value <= 80:
+        typing_speed = ["speed 5/6", alter_typing_speed(.03, .06)]
 
     else:
-        speed = ["slow_speed", alter_typing_speed(.20, .26)]
+        typing_speed = ["speed 6/6", alter_typing_speed(.01, .03)]
 
-    return speed
+    return typing_speed
 
 def non_selenium_write_lines(line, lines_set):
 
