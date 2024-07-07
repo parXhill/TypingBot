@@ -1,18 +1,28 @@
-## This will be used to create a typing bot.
-
 import pyautogui
 import time
 import random
 import csv
 
-def bootup(initial_delay, secondary_delay):
+#---------------- Functions ----------------#
+# Inserts mistakes at random intervals
+def add_mistake_chance(line):
     
-    time.sleep(initial_delay)
+    # Sets mistake chance
+    mistake_chance = random.randint(1, 100)
 
-    pyautogui.write(f"Will start writing lines in {secondary_delay} seconds", 0.01)
+    if mistake_chance > 101: 
 
-    time.sleep(secondary_delay)
+        # Chooses mistake character
+        mistake_indices = [0, 1, -1, -2]
+        mistake_index_selector = random.randint(0,3)
+        pyautogui.write(line[mistake_indices[mistake_index_selector]], 0.1)
+        print(line[mistake_indices[mistake_index_selector]])
+        time.sleep(4)
+        return True
+    else:
+        return False
 
+# Takes breaks at random intervals
 def break_chance():
 
     break_chance = random.randint(1, 10) 
@@ -21,6 +31,7 @@ def break_chance():
         time.sleep(break_time)
         return True
 
+# Sets random typing speeds for each line
 def get_typing_speed():
 
 ## Setting the chance of a break:
@@ -47,6 +58,13 @@ def get_typing_speed():
 
     return typing_speed
 
+
+
+
+
+
+
+#---------------- IGNORE: FOR TESTING PURPOSES ----------------#
 def non_selenium_write_lines(line, lines_set):
 
     total_lines = lines_set
@@ -114,21 +132,12 @@ def add_data_to_csv():
         
         csvwriter.writerows(data)
 
-def add_mistake_chance(line):
+def bootup(initial_delay, secondary_delay):
     
-    # Sets mistake chance
-    mistake_chance = random.randint(1, 100)
+    time.sleep(initial_delay)
 
-    if mistake_chance > 101: 
+    pyautogui.write(f"Will start writing lines in {secondary_delay} seconds", 0.01)
 
-        # Chooses mistake character
-        mistake_indices = [0, 1, -1, -2]
-        mistake_index_selector = random.randint(0,3)
-        pyautogui.write(line[mistake_indices[mistake_index_selector]], 0.1)
-        print(line[mistake_indices[mistake_index_selector]])
-        time.sleep(4)
-        return True
-    else:
-        return False
+    time.sleep(secondary_delay)
 
 data = []

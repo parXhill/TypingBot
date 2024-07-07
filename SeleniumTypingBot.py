@@ -5,7 +5,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pyautogui
 import time
-from typingbot import get_typing_speed, break_chance, add_mistake_chance
+from PyAutoGuiFunctions import get_typing_speed, break_chance, add_mistake_chance
 
 
 #---------------------------Functions---------------------------------#
@@ -229,7 +229,7 @@ def issues_check():
         interruption_loop()
         return "interruption"
 
-#---------------------------Start Program---------------------------------#
+#--------------------------- Program ---------------------------------#
 
 # Initialize driver on local path
 driver = initialize_selenium_driver(path= '/Users/alexanderparkhill/chromedriver')
