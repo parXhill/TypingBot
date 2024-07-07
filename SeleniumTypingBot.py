@@ -89,7 +89,7 @@ def initialize_task():
     line = get_initial_line()
 
     #Writes the first character to trigger DOM changes that reveal total lines 
-    pyautogui.write(line[0])
+    pyautogui.write(line, 0.1)
 
     time.sleep(2)
 
@@ -232,10 +232,14 @@ def issues_check():
 #--------------------------- Program ---------------------------------#
 
 # Initialize driver on local path
-driver = initialize_selenium_driver(path= '/Users/alexanderparkhill/chromedriver')
+
+pyautogui.write('a', 0.1)
+""" a"""
+
+driver = initialize_selenium_driver(path= '/Users/zadavalivoprosov/chromedriver')
 
 # Open the task with the URL
-open_task(task_URL="https://www.typeforme.net/task/5510fb05fc0a460c93ac01f4d3aea700")
+open_task(task_URL="https://www.typeforme.net/task/580a1d44cc06412487086a70d6654acfa")
 
 # Start typing
 write_lines()

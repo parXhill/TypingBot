@@ -114,7 +114,7 @@ def task_time_test(line, lines_set):
 
     start_time = time.time()
 
-    total_lines = write_lines(line, lines_set)
+    total_lines = non_selenium_write_lines(line, lines_set)
 
     end_time = time.time()
 
