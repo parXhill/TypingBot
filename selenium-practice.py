@@ -85,15 +85,7 @@ def split_into_chunks(line, chunk_size):
 
 def type_line(line, interval):
     
-    print('Entered type_line')
-    
-    # Break line up into chunks or individual characters
-
-    list_of_chunks = split_into_chunks(line, 1)
-
-    print(list_of_chunks)
-
-    for chunk in list_of_chunks:
+    for character in line:
 
         issue = issues_check()
 
@@ -103,12 +95,12 @@ def type_line(line, interval):
         
         elif issue == "interruption":
             print("Interruption loop finished: Continuing")
-            pyautogui.write(chunk, interval)
-            print(chunk)
+            pyautogui.write(character, interval)
+            print(character)
 
         else: 
-            pyautogui.write(chunk, interval)
-            print(chunk)
+            pyautogui.write(character, interval)
+            print(character)
 
     return True  
     

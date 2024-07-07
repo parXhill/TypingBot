@@ -5,7 +5,6 @@ import time
 import random
 import csv
 
-
 def bootup(initial_delay, secondary_delay):
     
     time.sleep(initial_delay)
@@ -131,28 +130,4 @@ def add_mistake_chance(line):
     else:
         return False
 
-############################### FUNCTIONS ABOVE ##############################
-
-
-#data = []
-
-#line = "It is better for me to type this than to be getting up to anything more mischievous."
-
-#lines_set= 30
-
-############# EXECUTE PROGRAM BELOW ##########################################
-
-## 1. Call bootup to initialize, preventing first letter being wrongly uncapitalized
-
-##bootup(initial_delay = 1, secondary_delay = 2)
-
-## 2. Call line writing function
-
-##task_time_test(line, lines_set)
-
-## 3. Add test data to CSV
-
-##add_data_to_csv()
-
-############# LINE PRACTICES BELOW ##########################################and yo
-""""""
+data = []
