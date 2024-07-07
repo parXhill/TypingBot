@@ -81,8 +81,12 @@ def issues_check():
         return "interruption"
 
 def type_line(line, interval):
-    
-    for character in line:
+
+    line_to_type_element = driver.find_element(By.ID, 'lineToTypeCurrent')
+    line_to_type = line_to_type_element.text
+    print("Line to type current:", line_to_type)
+
+    for character in line_to_type:
 
         issue = issues_check()
 
@@ -100,8 +104,13 @@ def type_line(line, interval):
             print(character)
 
     return True  
+
+def selenium_write_lines(lines_set):
     
-def selenium_write_lines(line, lines_set):
+    line = get_initial_line()
+
+    #Get it to write the first character in the testing phase
+    pyautogui.write(line[0])
 
     time.sleep(2)
 
@@ -116,7 +125,7 @@ def selenium_write_lines(line, lines_set):
 
         typing_speed = get_typing_speed()
         print(typing_speed)
-        interval = typing_speed[1]
+        interval = 0.01 #MODIFIED FOR FAST TEST, SHOULD BE typing_speed[1]
 
         ## Chance to pause between lines
         took_pause = pause_chance()
@@ -132,12 +141,18 @@ def selenium_write_lines(line, lines_set):
             total_lines +=1
 
         else: 
-            if type_line(line, interval):
+            if read_line_type_line(line, interval):
                 lines_set -= 1
+        
             
     print(total_lines)
     return total_lines
 
+def get_initial_line():
+    initial_line_element = driver.find_element(By.ID, 'lineToTypeInitial')
+    initial_line = initial_line_element.text
+    print("Initial line to type:", initial_line)
+    return initial_line
 
 #---------------------------Opening page---------------------------------#
 # Open the webpage
@@ -154,10 +169,9 @@ button = driver.find_element(By.CLASS_NAME, 'v-btn--elevated')
 button.click() 
 
 
-
 # Wait until the task becomes visible
 wait = WebDriverWait(driver, 10)
-task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/baa62fd23fef4b16a25893d22316dec3"]')))
+task_link = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href="/task/401cc525cac747f5a784f6e1b915a3a5"]')))
 
 # Click the element
 task_link.click()
@@ -173,6 +187,12 @@ new_button.click()
 print("Arrived on page, starting typing cycle in 3 seconds")
 time.sleep(2)
 
+# Read the initial line that has to be typed
+
+
+
+# Identify the remaining line to be typed. 
+
 
 #---------------------------Typing begins---------------------------------#
 
@@ -181,7 +201,7 @@ time.sleep(2)
 
 ## Complete the task
 
-selenium_write_lines("Please, Sir, may I have another? I can't help myself.", 50)
+selenium_write_lines(50)
 
 
 # Wait to observe results before browser closes
