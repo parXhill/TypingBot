@@ -24,11 +24,9 @@ def pause_chance():
 
 def get_mode():
 
-    mode = "mode error"
-
 ## Setting the chance of a break:
     if random.randint(1, 100) > 85:
-        mode = get_typing_speed() ##### ALTERED-SWITCHED-WITH-BREAK ########
+        mode = get_break_value() 
         print(mode)
     else: 
         mode = get_typing_speed()
@@ -40,8 +38,6 @@ def get_break_value():
 
     ## Decides the speed of the typing break period
     break_check_value = random.randint(1, 100) 
-
-    break_time = "error"
 
     if break_check_value <= 50:
         break_time = ["short_break", alter_typing_speed(.26, .30)]
@@ -59,8 +55,6 @@ def get_typing_speed():
     ## Decides the typing speed per segment
     typing_check_value = random.randint(1, 100)
 
-    speed = "speed error"
-
     if typing_check_value <= 50:
         speed = ["average_speed", alter_typing_speed(.12, .18)]
 
@@ -72,7 +66,7 @@ def get_typing_speed():
 
     return speed
 
-def original_write_lines(line, lines_set):
+def non_selenium_write_lines(line, lines_set):
 
     total_lines = lines_set
     print("Original total_lines:", total_lines)
@@ -144,7 +138,7 @@ def add_mistake_chance(line):
     # Sets mistake chance
     mistake_chance = random.randint(1, 100)
 
-    if mistake_chance > 100: #ALTERED FOR NO MISTAKES
+    if mistake_chance > 80: 
 
         # Chooses mistake character
         mistake_indices = [0, 1, -1, -2]

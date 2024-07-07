@@ -32,19 +32,20 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 #---------------------------Functions---------------------------------#
 
 def interruption_loop():
-    print("Entering Interruption Loop")
-    while check_for_interruption_screen():
-        print("Interruption Loop")
-        time.sleep(1)
+    print("Interruption Loop Started")
     time.sleep(2)
+    while check_for_interruption_screen():
+        print("Continuing Interruption Loop")
+        time.sleep(1)
     print("Exiting Interruption Loop")
+    time.sleep(2)
 
 def mistake_loop():
-    print("Unintentional: Entering Mistake Loop")
+    print("Mistake Loop Started")
     time.sleep(2)
     while check_for_mistake():
-        print("Mistake Loop")
-        time.sleep(2)
+        print("Continuing Mistake Loop")
+        time.sleep(1)
     print("Exiting Mistake Loop")
     time.sleep(2)
       
@@ -70,14 +71,14 @@ def issues_check():
     interruption_check = check_for_interruption_screen()
 
     if mistake_check == True:
-        print('Mistake Screen Detected')
+        print('Mistake Screen Detected: Entering mistake loop')
         mistake_loop()
-        return True
+        return "mistake"
 
     if interruption_check == True:
-        print('Interruption screen detected')
+        print('Interruption screen detected: Entering interruption loop')
         interruption_loop()
-        return True
+        return "interruption"
 
 def split_into_chunks(line, chunk_size):
     return [line[i:i + chunk_size] for i in range(0, len(line), chunk_size)]
@@ -85,16 +86,26 @@ def split_into_chunks(line, chunk_size):
 def type_line(line, interval):
     
     print('Entered type_line')
-    # Break line up
+    
+    # Break line up into chunks or individual characters
+
     list_of_chunks = split_into_chunks(line, 1)
+
     print(list_of_chunks)
 
     for chunk in list_of_chunks:
 
-        if issues_check():
-            print("Issue detected in type_line, returning")
+        issue = issues_check()
+
+        if issue == "mistake":
+            print("Mistake loop finished: Returning to main function")
             return False
         
+        elif issue == "interruption":
+            print("Interruption loop finished: Continuing")
+            pyautogui.write(chunk, interval)
+            print(chunk)
+
         else: 
             pyautogui.write(chunk, interval)
             print(chunk)
