@@ -1,35 +1,38 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pyautogui
 import time
-import random
 from typingbot import get_typing_speed, break_chance, add_mistake_chance
 
-driver_path = '/Users/alexanderparkhill/chromedriver'
-
-# Create a Service object
-service = Service(driver_path)
-
-chrome_options = webdriver.ChromeOptions()
-
-prefs = {"profile.default_content_setting_values.notifications" : 2}
-chrome_options.add_experimental_option("prefs",prefs)
-chrome_options.add_argument('--disable-infobars')
-chrome_options.add_argument('--disable-extensions')
-chrome_options.add_argument('--disable-notifications')
-chrome_options.add_argument('--disable-popup-blocking')
-chrome_options.add_argument('--disable-features=EnableEphemeralFlashPermission')
-
-
-# Initialize the ChromeDriver with the options
-driver = webdriver.Chrome(service=service, options=chrome_options)
 
 #---------------------------Functions---------------------------------#
+
+def initialize_selenium_driver(path):
+    
+    driver_path = path
+
+    # Create a Service object
+    service = Service(driver_path)
+
+    # Set options
+    chrome_options = webdriver.ChromeOptions()
+
+    prefs = {"profile.default_content_setting_values.notifications" : 2}
+    chrome_options.add_experimental_option("detach", True)
+    chrome_options.add_argument('--disable-infobars')
+    chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument('--disable-notifications')
+    chrome_options.add_argument('--disable-popup-blocking')
+    chrome_options.add_argument('--disable-features=EnableEphemeralFlashPermission')
+
+
+    # Initialize driver with options
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+
+    return driver
 
 def interruption_loop():
     print("Interruption Loop Started")
@@ -209,25 +212,16 @@ def initialize_task():
     time.sleep(1)
 
     return line
-#---------------------------Opening page---------------------------------#
+#---------------------------Start Program---------------------------------#
 
+# Initialize driver
+driver = initialize_selenium_driver('/Users/alexanderparkhill/chromedriver')
 
-
-
-#---------------------------Typing begins---------------------------------#
-
-## Trigger initial mistake to prevent capital letter issue
-
-
-## Complete the task
+# Open the task
 open_task("https://www.typeforme.net/task/8770528c954144258984136ed797d51d")
 
+# Start typing
 write_lines()
 
+print("Finished typing lines")
 
-# Wait to observe results before browser closes
-
-time.sleep(35)
-
-
-#----- unneeded? --------#
