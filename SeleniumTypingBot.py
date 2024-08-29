@@ -56,7 +56,6 @@ def open_task(task_URL):
     wait = WebDriverWait(driver, 10)
 
     # Go to specific task page
-
     driver.get(f'{task_URL}')
 
     # Deal with optional introduction screen
@@ -73,8 +72,8 @@ def open_task(task_URL):
         pass
 
     # Confirm arrival on page
-    time.sleep(1)
     print("Arrived on task page.")
+    time.sleep(15)
 
 # Finds the initial line string to write 
 def get_initial_line():
@@ -239,10 +238,11 @@ pyautogui.write('a', 0.1)
 driver = initialize_selenium_driver(path= '/Users/alexanderparkhill/chromedriver')
 
 # Open the task with the URL
-open_task(task_URL="https://www.typeforme.net/task/d07a71dea2314571b8b5bc3911a3b284")
+open_task(task_URL="https://www.typeforme.net/task/5b74865d128545de9fb4549def1b2ce8")
 
 # Start typing
 write_lines()
 
 print("Finished typing lines")
 
+"""aaa"""
